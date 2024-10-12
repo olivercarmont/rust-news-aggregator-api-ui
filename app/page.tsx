@@ -8,6 +8,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
+interface Article {
+  headline: string;
+  publisher: string;
+  publishedAt: string;
+}
+
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   const month = date.toLocaleString('en-US', { month: 'short' });
@@ -51,14 +57,14 @@ async function getArticles(query: string) {
 
 export default async function Home({ searchParams }: { searchParams: { query?: string } }) {
   const query = searchParams.query || '';
-  let articles = [];
+  let articles: Article[] = [];
   let error = null;
 
   if (query != "") {
     try {
       const data = await getArticles(query);
       const parsedResponse = JSON.parse(data.response);
-      articles = (parsedResponse.articles || []).filter(article => 
+      articles = (parsedResponse.articles as Article[] || []).filter((article: Article) => 
         article.headline !== "[Removed]" && article.publisher !== "[Removed]"
       );
     } catch (err) {
